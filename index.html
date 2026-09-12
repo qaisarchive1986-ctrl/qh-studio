@@ -1,0 +1,673 @@
+from pathlib import Path
+import shutil, zipfile
+
+project = Path("/mnt/data/QH-Studio-Final")
+if project.exists():
+    shutil.rmtree(project)
+(project / "assets").mkdir(parents=True)
+
+# Use the user's uploaded QH Studio logo.
+logo_src = Path("/mnt/data/file_00000000630081f494ac09dd625dd87f.png")
+logo_dst = project / "assets" / "qh-studio-logo.png"
+shutil.copy2(logo_src, logo_dst)
+
+html = r'''<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="QH Studio - AI, Web, Apps, Design and Digital Marketing">
+  <meta name="theme-color" content="#07152f">
+  <title>QH Studio | Your Ideas. Our Digital Solutions.</title>
+
+  <style>
+    :root{
+      --bg:#06142d;
+      --bg2:#091d40;
+      --card:#0a1b38;
+      --card2:#0c2348;
+      --text:#f6f8ff;
+      --muted:#aebbd1;
+      --blue:#1689ff;
+      --cyan:#22d3ee;
+      --orange:#ff7a00;
+      --orange2:#ffb000;
+      --line:rgba(114,174,255,.18);
+      --shadow:0 25px 70px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:Tahoma,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.75;
+      overflow-x:hidden;
+    }
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+    button,input,textarea,select{font:inherit}
+    .container{width:min(1180px,92%);margin:auto}
+
+    /* NAVIGATION */
+    header{
+      position:fixed;top:0;left:0;right:0;z-index:1000;
+      background:rgba(6,20,45,.86);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid var(--line);
+    }
+    .nav{
+      min-height:76px;
+      display:flex;align-items:center;justify-content:space-between;
+      gap:20px;
+    }
+    .brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:21px}
+    .brand img{
+      width:46px;height:46px;object-fit:contain;border-radius:12px;
+    }
+    .brand span span{color:var(--cyan)}
+    .desktop-menu{display:flex;align-items:center;gap:25px}
+    .desktop-menu a{font-size:14px;color:#dce7fa;transition:.25s}
+    .desktop-menu a:hover{color:var(--orange)}
+    .nav-actions{display:flex;align-items:center;gap:8px}
+    .small-btn{
+      border:1px solid var(--line);
+      color:var(--text);
+      background:rgba(255,255,255,.04);
+      padding:8px 10px;border-radius:10px;cursor:pointer;
+    }
+    .quote-btn{
+      background:linear-gradient(135deg,var(--orange),var(--orange2));
+      color:#161616;padding:10px 18px;border-radius:11px;font-weight:900;
+      box-shadow:0 8px 25px rgba(255,122,0,.2);
+    }
+    .menu-btn{display:none}
+
+    /* HERO */
+    .hero{
+      min-height:100vh;padding:135px 0 80px;display:flex;align-items:center;
+      background:
+        radial-gradient(circle at 80% 25%,rgba(22,137,255,.20),transparent 26%),
+        radial-gradient(circle at 20% 72%,rgba(255,122,0,.13),transparent 25%),
+        linear-gradient(135deg,#051126,#081d42 58%,#06142d);
+      position:relative;isolation:isolate;
+    }
+    .hero:before,.hero:after{
+      content:"";position:absolute;z-index:-1;opacity:.7;
+      border:1px solid rgba(22,137,255,.22);transform:rotate(-45deg);
+    }
+    .hero:before{width:400px;height:400px;left:-270px;top:100px}
+    .hero:after{width:350px;height:350px;right:-230px;bottom:40px;border-color:rgba(255,122,0,.22)}
+    .hero-grid{
+      display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center;
+    }
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;color:#ffb35d;
+      font-size:13px;font-weight:900;letter-spacing:1px;
+    }
+    .eyebrow i{
+      width:9px;height:9px;border-radius:50%;background:var(--orange);
+      box-shadow:0 0 18px var(--orange);
+    }
+    h1{font-size:clamp(44px,6vw,78px);line-height:1.05;margin:16px 0 18px}
+    .blue-text{
+      background:linear-gradient(90deg,#fff 0%,var(--cyan) 55%,var(--blue));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .hero p{font-size:18px;color:var(--muted);max-width:650px}
+    .quick-services{
+      display:flex;gap:10px;flex-wrap:wrap;margin:25px 0;
+    }
+    .quick-services span{
+      padding:8px 11px;border-left:1px solid var(--blue);font-size:12px;color:#d9e8ff;
+    }
+    .hero-buttons{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      padding:13px 22px;border-radius:12px;display:inline-flex;align-items:center;
+      justify-content:center;gap:8px;font-weight:900;transition:.25s;border:1px solid var(--line);
+    }
+    .btn:hover{transform:translateY(-3px)}
+    .btn-primary{
+      color:#141414;border:0;
+      background:linear-gradient(135deg,var(--orange),var(--orange2));
+    }
+    .btn-outline{background:rgba(255,255,255,.03)}
+    .hero-logo-box{
+      border:1px solid var(--line);border-radius:28px;padding:25px;
+      background:linear-gradient(145deg,rgba(15,47,96,.72),rgba(3,12,30,.55));
+      box-shadow:var(--shadow);
+    }
+    .hero-logo-box img{
+      width:100%;max-width:500px;margin:auto;border-radius:18px;
+    }
+
+    /* GENERAL */
+    section{padding:90px 0}
+    .section-head{margin-bottom:40px}
+    .section-head.center{text-align:center}
+    .kicker{color:#ff9b3e;font-size:12px;font-weight:900;letter-spacing:1.5px}
+    h2{font-size:clamp(30px,4vw,45px);line-height:1.2;margin:7px 0 10px}
+    .section-head p{color:var(--muted);max-width:680px}
+    .section-head.center p{margin:auto}
+
+    /* SERVICES */
+    .services{
+      display:grid;grid-template-columns:repeat(5,1fr);gap:14px;
+    }
+    .service-card{
+      background:linear-gradient(145deg,var(--card2),rgba(6,20,45,.75));
+      border:1px solid var(--line);border-radius:18px;padding:22px 16px;
+      transition:.25s;
+    }
+    .service-card:hover{transform:translateY(-7px);border-color:rgba(255,122,0,.6)}
+    .service-icon{
+      width:54px;height:54px;border-radius:15px;display:grid;place-items:center;
+      background:linear-gradient(135deg,rgba(22,137,255,.25),rgba(34,211,238,.12));
+      border:1px solid var(--line);font-size:25px;margin-bottom:16px;
+    }
+    .service-card:nth-child(4) .service-icon,
+    .service-card:nth-child(5) .service-icon{
+      background:linear-gradient(135deg,rgba(255,122,0,.27),rgba(255,176,0,.12));
+    }
+    .service-card h3{font-size:16px}
+    .service-card p{font-size:12px;color:var(--muted);margin:7px 0 14px}
+    .service-card a{font-size:12px;color:var(--cyan)}
+
+    /* ABOUT */
+    .about{
+      display:grid;grid-template-columns:.9fr 1.1fr;gap:40px;align-items:center;
+    }
+    .about-visual{
+      min-height:370px;border-radius:25px;overflow:hidden;position:relative;
+      background:
+        linear-gradient(145deg,rgba(5,17,38,.25),rgba(5,17,38,.9)),
+        linear-gradient(135deg,#124889,#071832);
+      border:1px solid var(--line);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .about-visual img{width:75%;border-radius:18px;box-shadow:var(--shadow)}
+    .about-content p{color:var(--muted);margin-bottom:18px}
+    .checks{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .check{
+      padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);
+      font-size:14px;
+    }
+    .check b{color:var(--orange);margin-left:7px}
+    .stats{
+      margin-top:25px;padding-top:22px;border-top:1px solid var(--line);
+      display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+    }
+    .stat b{font-size:25px;color:var(--cyan);display:block}
+    .stat span{font-size:12px;color:var(--muted)}
+
+    /* PORTFOLIO */
+    .portfolio{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .project{
+      min-height:285px;border-radius:20px;padding:20px;overflow:hidden;position:relative;
+      border:1px solid var(--line);display:flex;flex-direction:column;justify-content:end;
+      background:linear-gradient(145deg,#0d336d,#06142d);
+    }
+    .project:before{
+      content:"";position:absolute;width:190px;height:190px;border-radius:50%;
+      right:-60px;top:-70px;background:radial-gradient(circle,rgba(34,211,238,.30),transparent 68%);
+    }
+    .project:nth-child(2){background:linear-gradient(145deg,#101f48,#0b1631)}
+    .project:nth-child(3){background:linear-gradient(145deg,#4b2410,#081731)}
+    .mock{
+      height:145px;border-radius:13px;margin-bottom:17px;position:relative;
+      border:1px solid rgba(255,255,255,.18);
+      background:linear-gradient(145deg,rgba(22,137,255,.42),rgba(0,0,0,.2));
+      overflow:hidden;
+    }
+    .project:nth-child(2) .mock{background:linear-gradient(145deg,rgba(117,90,255,.35),rgba(22,137,255,.18))}
+    .project:nth-child(3) .mock{background:linear-gradient(145deg,rgba(255,122,0,.55),rgba(22,137,255,.22))}
+    .mock:before{content:"";position:absolute;left:14px;right:14px;top:15px;height:10px;border-radius:8px;background:rgba(255,255,255,.38)}
+    .mock:after{content:"";position:absolute;left:14px;right:14px;top:40px;bottom:15px;border:1px solid rgba(255,255,255,.18);border-radius:8px}
+    .project small{color:var(--cyan);position:relative}
+    .project h3{font-size:21px;position:relative}
+
+    /* PROCESS */
+    .process{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .step{padding:20px;border-top:2px solid var(--blue)}
+    .step:nth-child(2){border-color:var(--cyan)}
+    .step:nth-child(3){border-color:var(--orange)}
+    .step:nth-child(4){border-color:var(--orange2)}
+    .number{font-size:35px;font-weight:900;color:#244d88}
+    .step h3{font-size:18px;margin-bottom:6px}
+    .step p{font-size:13px;color:var(--muted)}
+
+    /* CONTACT */
+    .contact-section{
+      background:linear-gradient(135deg,#091e44,#06142d);
+      border-top:1px solid var(--line);
+    }
+    .contact-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:35px}
+    .contact-info{display:grid;gap:12px;margin-top:20px}
+    .info{
+      padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);
+    }
+    .info small{display:block;color:var(--muted)}
+    .info strong{display:block;direction:ltr;text-align:left;font-size:14px}
+    .form-box{padding:24px;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.035)}
+    form{display:grid;gap:13px}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    input,textarea,select{
+      width:100%;padding:13px 14px;border-radius:11px;border:1px solid var(--line);
+      background:rgba(255,255,255,.055);color:var(--text);outline:none;
+    }
+    input:focus,textarea:focus,select:focus{border-color:var(--orange)}
+    textarea{min-height:135px;resize:vertical}
+    option{background:#0a1b38}
+    .form-note{font-size:11px;color:var(--muted)}
+
+    /* FLOATING SOCIAL */
+    .floating-social{
+      position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:900;
+      display:grid;gap:7px;padding:8px;border:1px solid var(--line);
+      border-radius:16px;background:rgba(6,20,45,.76);backdrop-filter:blur(10px);
+    }
+    .floating-social a{
+      width:40px;height:40px;border-radius:10px;display:grid;place-items:center;
+      background:rgba(255,255,255,.06);font-weight:900;font-size:12px;
+    }
+    .floating-social a:hover{background:var(--orange);color:#111}
+
+    footer{padding:35px 0;border-top:1px solid var(--line);color:#91a2c1;font-size:12px}
+    .footer{display:flex;align-items:center;justify-content:space-between;gap:15px}
+    .footer-brand{display:flex;align-items:center;gap:8px;color:#fff;font-weight:900}
+    .footer-brand img{width:36px;height:36px;object-fit:contain;border-radius:9px}
+
+    .reveal{opacity:0;transform:translateY(25px);transition:.65s ease}
+    .reveal.show{opacity:1;transform:none}
+
+    @media(max-width:1000px){
+      .services{grid-template-columns:repeat(3,1fr)}
+      .hero-grid,.about,.contact-grid{grid-template-columns:1fr}
+      .hero-logo-box{max-width:600px;margin:auto}
+    }
+    @media(max-width:760px){
+      .desktop-menu{display:none}
+      .menu-btn{display:block}
+      .quote-btn{display:none}
+      .mobile-menu{
+        display:none;position:absolute;top:76px;left:4%;right:4%;
+        padding:12px;border:1px solid var(--line);border-radius:16px;
+        background:#081a38;box-shadow:var(--shadow);
+      }
+      .mobile-menu.open{display:grid}
+      .mobile-menu a{padding:10px 12px;color:#dce7fa}
+      .services,.portfolio{grid-template-columns:1fr 1fr}
+      .process{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:540px){
+      .hero{padding-top:115px}
+      h1{font-size:46px}
+      .services,.portfolio,.process,.checks,.form-row{grid-template-columns:1fr}
+      .quick-services span{font-size:11px}
+      .floating-social{display:none}
+      .stats{grid-template-columns:1fr 1fr 1fr}
+      .footer{flex-direction:column;text-align:center}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="brand" href="#home">
+      <img src="assets/qh-studio-logo.png" alt="QH Studio Logo">
+      <span>QH <span>Studio</span></span>
+    </a>
+
+    <nav class="desktop-menu">
+      <a href="#home">خانه</a>
+      <a href="#services">خدمات</a>
+      <a href="#portfolio">نمونه‌کارها</a>
+      <a href="#about">درباره ما</a>
+      <a href="#contact">تماس</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="small-btn" id="langBtn" type="button">EN</button>
+      <a class="quote-btn" href="#contact">درخواست قیمت</a>
+      <button class="small-btn menu-btn" id="menuBtn" type="button">☰</button>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#home">خانه</a>
+      <a href="#services">خدمات</a>
+      <a href="#portfolio">نمونه‌کارها</a>
+      <a href="#about">درباره ما</a>
+      <a href="#contact">تماس</a>
+    </div>
+  </div>
+</header>
+
+<aside class="floating-social" aria-label="Social links">
+  <a href="https://wa.me/93799687688" target="_blank" rel="noopener">WA</a>
+  <a href="#" aria-label="Facebook">f</a>
+  <a href="#" aria-label="Instagram">IG</a>
+  <a href="#" aria-label="LinkedIn">in</a>
+</aside>
+
+<main>
+  <section class="hero" id="home">
+    <div class="container hero-grid">
+      <div class="reveal">
+        <div class="eyebrow"><i></i> WELCOME TO QH STUDIO</div>
+        <h1>ایده‌های شما.<br><span class="blue-text">راهکارهای دیجیتال ما.</span></h1>
+        <p>
+          QH Studio با ترکیب خلاقیت و فناوری، راهکارهای هوش مصنوعی،
+          وب‌سایت، اپلیکیشن، طراحی گرافیک و بازاریابی دیجیتال ارائه می‌کند.
+        </p>
+
+        <div class="quick-services">
+          <span>🤖 AI & Digital Solutions</span>
+          <span>🌐 Website & App Development</span>
+          <span>🎨 Graphic Design</span>
+          <span>📣 Social Media Marketing</span>
+        </div>
+
+        <div class="hero-buttons">
+          <a class="btn btn-primary" href="#contact">درخواست همکاری ←</a>
+          <a class="btn btn-outline" href="#services">مشاهده خدمات</a>
+        </div>
+      </div>
+
+      <div class="hero-logo-box reveal">
+        <img src="assets/qh-studio-logo.png" alt="QH Studio - Your Ideas. Our Digital Solutions.">
+      </div>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="kicker">OUR SERVICES</div>
+        <h2>ما چه کاری انجام می‌دهیم؟</h2>
+        <p>راهکارهای مدرن دیجیتال برای کمک به رشد کسب‌وکار و حضور حرفه‌ای شما در اینترنت.</p>
+      </div>
+
+      <div class="services">
+        <article class="service-card reveal">
+          <div class="service-icon">🤖</div>
+          <h3>AI & Digital Solutions</h3>
+          <p>اتوماسیون، ابزارهای هوشمند و راهکارهای مبتنی بر AI.</p>
+          <a href="#contact">بیشتر بدانید ←</a>
+        </article>
+        <article class="service-card reveal">
+          <div class="service-icon">🌐</div>
+          <h3>Website Development</h3>
+          <p>وب‌سایت مدرن، سریع و واکنش‌گرا برای کسب‌وکار شما.</p>
+          <a href="#contact">بیشتر بدانید ←</a>
+        </article>
+        <article class="service-card reveal">
+          <div class="service-icon">📱</div>
+          <h3>App Development</h3>
+          <p>توسعه اپلیکیشن برای ایده‌ها، خدمات و کسب‌وکارها.</p>
+          <a href="#contact">بیشتر بدانید ←</a>
+        </article>
+        <article class="service-card reveal">
+          <div class="service-icon">✏️</div>
+          <h3>Graphic Design</h3>
+          <p>لوگو، بنر، پست و هویت بصری حرفه‌ای برای برند شما.</p>
+          <a href="#contact">بیشتر بدانید ←</a>
+        </article>
+        <article class="service-card reveal">
+          <div class="service-icon">📣</div>
+          <h3>Social Media Marketing</h3>
+          <p>طراحی محتوا و تبلیغات برای رشد در شبکه‌های اجتماعی.</p>
+          <a href="#contact">بیشتر بدانید ←</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="container about">
+      <div class="about-visual reveal">
+        <img src="assets/qh-studio-logo.png" alt="QH Studio">
+      </div>
+
+      <div class="about-content reveal">
+        <div class="kicker">ABOUT QH STUDIO</div>
+        <h2>ما تجربه‌های دیجیتال <span class="blue-text">اثرگذار</span> می‌سازیم</h2>
+        <p>
+          QH Studio یک استودیوی خلاق و فناوری‌محور است. هدف ما کمک به افراد،
+          کسب‌وکارها و سازمان‌ها برای تبدیل ایده‌هایشان به محصولات و راهکارهای دیجیتال است.
+        </p>
+
+        <div class="checks">
+          <div class="check"><b>✓</b> طراحی مدرن و حرفه‌ای</div>
+          <div class="check"><b>✓</b> تمرکز بر نیاز واقعی مشتری</div>
+          <div class="check"><b>✓</b> فناوری قابل توسعه</div>
+          <div class="check"><b>✓</b> پشتیبانی و همکاری</div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><b>AI</b><span>راهکارهای هوشمند</span></div>
+          <div class="stat"><b>Web</b><span>توسعه وب</span></div>
+          <div class="stat"><b>Apps</b><span>اپلیکیشن</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="portfolio">
+    <div class="container">
+      <div class="section-head center reveal">
+        <div class="kicker">OUR PORTFOLIO</div>
+        <h2>پروژه‌های منتخب</h2>
+        <p>نمونه‌هایی از نوع پروژه‌هایی که QH Studio می‌تواند طراحی و توسعه دهد.</p>
+      </div>
+
+      <div class="portfolio">
+        <article class="project reveal">
+          <div class="mock"></div>
+          <small>WEB DEVELOPMENT</small>
+          <h3>وب‌سایت حرفه‌ای کسب‌وکار</h3>
+        </article>
+        <article class="project reveal">
+          <div class="mock"></div>
+          <small>AI SOLUTION</small>
+          <h3>دستیار هوشمند مبتنی بر AI</h3>
+        </article>
+        <article class="project reveal">
+          <div class="mock"></div>
+          <small>BRAND & SOCIAL MEDIA</small>
+          <h3>هویت برند و تبلیغات اجتماعی</h3>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head center reveal">
+        <div class="kicker">OUR PROCESS</div>
+        <h2>چطور کار می‌کنیم؟</h2>
+      </div>
+
+      <div class="process">
+        <div class="step reveal">
+          <div class="number">01</div>
+          <h3>مشاوره</h3>
+          <p>هدف، نیاز و جزئیات پروژه را بررسی می‌کنیم.</p>
+        </div>
+        <div class="step reveal">
+          <div class="number">02</div>
+          <h3>طراحی</h3>
+          <p>ساختار، ظاهر و راهکار مناسب پروژه را طراحی می‌کنیم.</p>
+        </div>
+        <div class="step reveal">
+          <div class="number">03</div>
+          <h3>توسعه</h3>
+          <p>پروژه با فناوری مناسب پیاده‌سازی و آزمایش می‌شود.</p>
+        </div>
+        <div class="step reveal">
+          <div class="number">04</div>
+          <h3>تحویل</h3>
+          <p>محصول نهایی آماده استفاده و توسعه‌های بعدی می‌شود.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-section" id="contact">
+    <div class="container contact-grid">
+      <div class="reveal">
+        <div class="kicker">CONTACT QH STUDIO</div>
+        <h2>بیایید ایده شما را به واقعیت دیجیتال تبدیل کنیم.</h2>
+        <p style="color:var(--muted)">برای همکاری، پروژه یا دریافت اطلاعات بیشتر با ما تماس بگیرید.</p>
+
+        <div class="contact-info">
+          <div class="info">
+            <small>Scientific & Research</small>
+            <strong>research@qhvisionx.af</strong>
+          </div>
+          <div class="info">
+            <small>Technical & General</small>
+            <strong>qaishaidari.smart@gmail.com</strong>
+          </div>
+          <div class="info">
+            <small>WhatsApp</small>
+            <strong>+93 799 687 688</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-box reveal">
+        <form id="contactForm">
+          <div class="form-row">
+            <input id="name" required placeholder="نام شما">
+            <input id="email" type="email" required placeholder="ایمیل شما">
+          </div>
+
+          <select id="service">
+            <option value="">نوع خدمات را انتخاب کنید</option>
+            <option>AI & Digital Solutions</option>
+            <option>Website Development</option>
+            <option>App Development</option>
+            <option>Graphic Design</option>
+            <option>Social Media Marketing</option>
+          </select>
+
+          <textarea id="message" required placeholder="پیام یا توضیحات پروژه شما"></textarea>
+
+          <button class="btn btn-primary" type="submit">ارسال درخواست ←</button>
+          <div class="form-note">
+            در این نسخه GitHub Pages، فرم از طریق برنامه ایمیل دستگاه شما ارسال می‌شود.
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer">
+    <div class="footer-brand">
+      <img src="assets/qh-studio-logo.png" alt="QH Studio">
+      <span>QH Studio</span>
+    </div>
+    <div>© 2026 QH Studio. All rights reserved.</div>
+    <div>Your Ideas. Our Digital Solutions.</div>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+  }
+
+  document.querySelectorAll('.mobile-menu a').forEach(link => {
+    link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  });
+
+  // Scroll animations
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('show');
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Contact form - opens the user's email application
+  document.getElementById('contactForm').addEventListener('submit', function(e){
+    e.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const service = document.getElementById('service').value || 'General Inquiry';
+    const message = document.getElementById('message').value.trim();
+
+    const subject = encodeURIComponent('QH Studio Project Request - ' + service);
+    const body = encodeURIComponent(
+      'Name: ' + name +
+      '\nEmail: ' + email +
+      '\nService: ' + service +
+      '\n\nMessage:\n' + message
+    );
+
+    window.location.href =
+      'mailto:qaishaidari.smart@gmail.com?subject=' + subject + '&body=' + body;
+  });
+
+  // Simple language direction switch placeholder
+  const langBtn = document.getElementById('langBtn');
+  let englishMode = false;
+
+  langBtn.addEventListener('click', () => {
+    englishMode = !englishMode;
+    if (englishMode) {
+      document.documentElement.lang = 'en';
+      document.documentElement.dir = 'ltr';
+      langBtn.textContent = 'دری';
+      alert('English layout mode enabled. The full English text version can be added as the next step.');
+    } else {
+      document.documentElement.lang = 'fa';
+      document.documentElement.dir = 'rtl';
+      langBtn.textContent = 'EN';
+    }
+  });
+</script>
+
+</body>
+</html>
+'''
+
+(project / "index.html").write_text(html, encoding="utf-8")
+
+readme = """# QH Studio Website
+
+این نسخه برای GitHub Pages آماده است و لوگوی QH Studio داخل پروژه اضافه شده است.
+
+## ساختار فایل‌ها
+- index.html
+- assets/qh-studio-logo.png
+
+## انتشار در GitHub Pages
+1. یک Repository جدید بسازید.
+2. تمام فایل‌ها را بدون تغییر ساختار پوشه‌ها آپلود کنید.
+3. به Settings > Pages بروید.
+4. Deploy from a branch را انتخاب کنید.
+5. Branch اصلی (main) و /(root) را انتخاب کنید.
+6. Save را بزنید.
+
+نکته: لینک‌های Facebook، Instagram و LinkedIn فعلاً نمونه هستند و باید با لینک واقعی صفحات QH Studio جایگزین شوند.
+"""
+(project / "README.md").write_text(readme, encoding="utf-8")
+
+zip_path = Path("/mnt/data/QH-Studio-Complete-GitHub-Pages.zip")
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    for file in project.rglob("*"):
+        if file.is_file():
+            z.write(file, arcname=str(file.relative_to(project)))
+
+print(f"Created project: {project}")
+print(f"Created ZIP: {zip_path}")
